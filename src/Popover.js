@@ -87,6 +87,17 @@ class Popover extends React.Component {
       // I found that the RN SafeAreaView doesn't actually tell you the safe area until the second layout,
       //  so we don't want to rely on it to give us an accurate display area until it's figured that out
       this.safeAreaViewReady = false;
+      Dimensions.addEventListener('change', this.handleResizeEvent)
+    }
+
+    handleResizeEvent = (event) => {
+      const displayArea = this.getDisplayArea();
+      this.setState({shiftedDisplayArea: {
+        x: displayArea.x,
+        y: displayArea.y,
+        width: event.window.width,
+        height: event.window.height
+      }}, () => this.handleGeomChange({displayArea: this.state.shiftedDisplayArea}));
     }
 
     componentWillUnmount() {
@@ -649,7 +660,7 @@ class Popover extends React.Component {
                 </TouchableWithoutFeedback>
 
                 <View style={{top: 0, left: 0}}>
-                  
+
                   <Animated.View style={popoverViewStyle} onLayout={evt => this.measureContent(evt.nativeEvent.layout)}>
                     {this.props.children}
                   </Animated.View>
